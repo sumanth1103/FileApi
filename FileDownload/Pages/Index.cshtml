@@ -1,0 +1,35 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+@using System.Net.Http;
+@using System.Net.Http.Headers;
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+@{
+    string baseUrl = "https://localhost:44327/";
+    using (var client = new HttpClient())
+    {
+        client.BaseAddress = new Uri(baseUrl);
+        client.DefaultRequestHeaders.Clear();
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/csv"));
+        HttpResponseMessage res = await client.GetAsync("api/Files");
+        if (res.IsSuccessStatusCode)
+        {
+
+            var f = res.Content.ReadAsByteArrayAsync().Result;
+            System.IO.File.WriteAllBytes("Student.csv", f);
+            <a href="C:\Users\899167\source\repos\FileApi\FileDownload\Student.csv" download>Download here</a>
+        }
+        else
+        {
+            <h2>Unable to process the request</h2>
+        }
+        //}
+    }
+
+}
